@@ -1,4 +1,4 @@
-
+initWebsocket();
 startGame();
 
 // Background
@@ -12,28 +12,22 @@ game.components.push(new function(){
 // Player
 game.components.push(new Player());
 
+// setInterval(() => {
+//     console.log('-tick-')
+//     const payload = {
+//         type: 'cosa1'
+//     };
+//     ws.send(JSON.stringify(payload));
+// }, 1000);
 
 
 
 
-function Player() {
-    this.x = 50;
-    this.y = 50;
-    this.vel = 5;
-    this.width = 50;
-    this.height = 50;
-    this.color = '#ddff00';
 
-    // Update
-    this.update = function () {
-        if (isKeyDown.up) this.y -= this.vel
-        if (isKeyDown.down) this.y += this.vel
-        if (isKeyDown.left) this.x -= this.vel
-        if (isKeyDown.right) this.x += this.vel
-    };
-    // Render
-    this.render = function(ctx) {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-    };
-}
+
+
+ws.onmessage = function (evt) { 
+    const result = JSON.parse(evt.data);
+    console.log(result);
+    // var received_msg = evt.data;
+};

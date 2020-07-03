@@ -3,7 +3,7 @@
 const game = {
     viewport: document.getElementById('canvas'),
     components: [],
-    targetFps: 60,
+    targetFps: 20,
 
     start : function() {
         this.context = this.viewport.getContext("2d");
