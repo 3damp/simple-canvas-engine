@@ -27,17 +27,32 @@ function mainLoop() {
     render();
     
     function update() {
-        game.components.forEach((component, index) => {
-            if(component.update) component.update();
-        });
-    
+        updateAll(game.components);
     }
+
     function render() {
         game.clear();
-        game.components.forEach((component, index) => {
-            if(component.render) component.render(game.context);
+        renderAll(game.components);    
+    }
+
+    function updateAll(componentList) {
+        componentList.forEach((component, index) => {
+            if(component.update) {
+                component.update();
+            } else if (component instanceof Map || Array.isArray(component)){
+                updateAll(component);
+            }
         });
-    
+    }
+
+    function renderAll(componentList) {
+        componentList.forEach((component, index) => {
+            if(component.render) {
+                component.render(game.context);
+            } else if (component instanceof Map || Array.isArray(component)){
+                renderAll(component);
+            }
+        });
     }
 }
 

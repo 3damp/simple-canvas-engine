@@ -30,12 +30,13 @@ class Player {
 
 
 class Guest {
-    constructor(x, y) {
+    constructor(id, x, y) {
+        this.id = id;
         this.x = x || 0;
         this.y = y || 0;
         this.width = 50;
         this.height = 50;
-        this.color = '#ddff00';
+        this.color = '#DDDDDD';
     }
 
     // Update
