@@ -5,7 +5,10 @@ require('dotenv').config();
 
 const port = process.env.PORT || 3000;
 const wsPort = process.env.WEBSOCKET_PORT || 3001;
-const tickInterval = 1000/process.env.TICKS_PER_SEC || 1000/30;
+
+// ticksPerSec: How often the server will send an update to all clients.
+const ticksPerSec = process.env.TICKS_PER_SEC || 60;
+
 let tickSender = undefined;
 
 app.listen(port, () => {
@@ -14,8 +17,10 @@ app.listen(port, () => {
 app.use(express.static('public'));
 
 
-// WEBSOCKET
-const clients = new Map();
+// clientConnections:  Links every client connection to a player ID.
+const clientConnections = new Map();
+// clientPositions:  Object to store all clients received data to be sent every tick.
+const clientPositions = {};
 
 httpServer.listen(wsPort, () => {
     console.log(`Listening on port ${wsPort}.`);
@@ -25,71 +30,72 @@ const websocketServer = require("websocket").server;
 const wsServer = new websocketServer({
     "httpServer": httpServer
 });
+
 wsServer.on("request", request => {
+
+    /* ON NEW CONNECTION: */
     console.log('New client connected!')
-    // On Connection
     const connection = request.accept(null, request.origin);
     // create new player
-    connection.playerId = generatePlayerId();
-    clients.set(connection.playerId, {
+    const clientId = generateClientId();
+    clientConnections.set(clientId, {
         connection: connection,
-        x: 0,
-        y: 0,
     });
-    connection.send(connection.playerId);
+    // send ID back to client
+    connection.send(clientId);
     console.log('ID sent')
 
-    // On Disconnection
+
+    /* ON CLIENT DISCONNECTS */
     connection.on("close", () => {
         console.log("Client disconnected!");
-        // remove player
-        clients.delete(connection.playerId);
-        if (clients.size <= 0 && tickSender) {
+        // remove player data
+        clientConnections.delete(clientId);
+        delete clientPositions[clientId];
+
+        // Stop tick timer
+        if (clientConnections.size <= 0 && tickSender) {
             clearInterval(tickSender);
             tickSender = false;
             console.log('Stopped sending ticks.');
         }
     });
 
-    // On Message from client
+    /* ON MESSAGE FROM CLIENT */
     connection.on("message", (message) => {
         const result = JSON.parse(message.utf8Data);
-        // update saved player
-        const player = clients.get(connection.playerId);
-        player.x = result.x;
-        player.y = result.y;
-        
+        // update saved clientPositions
+        clientPositions[clientId] = {
+            x: result.x,
+            y: result.y,
+        };        
     });
     
     // Start timer if at least 1 client is connected and is not already running.
-    if (clients.size > 0 && !tickSender) {
+    if (clientConnections.size > 0 && !tickSender) {
         startTicks();
     }    
 
 });
+/**
+ * Starts heartbeat to send updates to all clients.
+ */
 function startTicks() {
     tickSender = setInterval(() => {
-        const payload = [];
-        // add each player to payload
-        clients.forEach((client, id) => {
-            payload.push({
-                id: id,
-                x: client.x,
-                y: client.y
-            });
+        // Send all clients positions to all clients.
+        clientConnections.forEach((client, id) => {
+            client.connection.send(JSON.stringify(clientPositions))
         });
-        // send payload to each player
-        clients.forEach((client, id) => {
-            client.connection.send(JSON.stringify(payload))
-        });
-    }, tickInterval);
-    console.log('Sending ticks every '+tickInterval+'ms...')
+
+    }, 1000/ticksPerSec);
+
+    console.log('Sending ticks every '+(1000/ticksPerSec).toFixed(2)+'ms...')
 }
 
 /**
  * Create ID for players
  */
-const generatePlayerId = () => {
+const generateClientId = () => {
     // TODO: make this a guid
     return Math.floor(Math.random() * 9999999);
 }

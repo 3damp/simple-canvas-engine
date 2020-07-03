@@ -1,3 +1,9 @@
+
+/**
+ * Player with keyboard control and sending data to server.
+ * @param x optional
+ * @param y optional
+ */
 class Player {
     constructor(x, y) {
         this.x = x || 50;
@@ -28,7 +34,13 @@ class Player {
     };
 }
 
-
+/**
+ * Other players being rendered on screen.
+ * No control, just rendered.
+ * @param id
+ * @param x
+ * @param y
+ */
 class Guest {
     constructor(id, x, y) {
         this.id = id;
@@ -36,12 +48,9 @@ class Guest {
         this.y = y || 0;
         this.width = 50;
         this.height = 50;
-        this.color = '#DDDDDD';
+        this.color = '#AAAAAA';
     }
 
-    // Update
-    update = function () {
-    };
     // Render
     render = function(ctx) {
         ctx.fillStyle = this.color;
