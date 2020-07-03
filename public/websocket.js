@@ -3,7 +3,11 @@ let ws = undefined;
 
 function initWebsocket() {
     if ("WebSocket" in window) {
-        ws = new WebSocket("ws://localhost:2000/websocket");
+        const port = 3001;
+        const hostname = window.location.hostname;
+        const ENDPOINT = `ws://${hostname}:${port}/websocket`
+        
+        ws = new WebSocket(ENDPOINT);
          
         ws.onopen = function () { 
             console.log("WebSocket connected.");

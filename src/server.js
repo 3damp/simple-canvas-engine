@@ -17,7 +17,7 @@ app.use(express.static('public'));
 // WEBSOCKET
 const clients = new Map();
 
-httpServer.listen(2000, () => {
+httpServer.listen(wsPort, () => {
     console.log(`Listening on port ${wsPort}.`);
 });
 
