@@ -1,7 +1,7 @@
 # simple-canvas-engine
 Super simple canvas engine for experiments `/public/canvasEngine.js`
 ## Includes
-- sample "game" experiment  `/public/myGame.js` `/public/myGameClasses.js` (pure JavaScript)
+- example "game" experiment  `/public/myGame.js` `/public/myGameClasses.js` (pure JavaScript)
 - express server for backend and to serve client website.
 - websockets for client-server communication.
 
