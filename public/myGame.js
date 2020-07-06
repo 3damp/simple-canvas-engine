@@ -1,3 +1,11 @@
+///--------------------------------------
+///  Example Game main file
+///  
+///  Author: Armand M.
+///--------------------------------------
+
+
+// Start game
 myGame();
 
 // main function
@@ -9,13 +17,7 @@ function myGame() {
 
     /* -- COMPONENTS INIT -- */
     // Add Background
-    game.components.push(new function(){
-        this.color = '#000000'
-        this.render = function(ctx) {
-            ctx.fillStyle = this.color;
-            ctx.fillRect(0, 0, game.viewport.width, game.viewport.height);
-        }
-    });
+    game.components.push(new Background());
     // Add Map for other Players
     const guests = new Map();
     game.components.push(guests);
@@ -51,8 +53,8 @@ function myGame() {
                 const pos = newPositionList[id];
                 const playerToUpdate = guests.get(id);
                 if (playerToUpdate) {
-                    playerToUpdate.x = pos.x;
-                    playerToUpdate.y = pos.y;
+                    playerToUpdate.position.x = pos.x;
+                    playerToUpdate.position.y = pos.y;
                 } else {
                     guests.set(id, new Guest(id, pos.x, pos.y));
                 }

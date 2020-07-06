@@ -1,3 +1,9 @@
+///--------------------------------------
+///  Server
+///  
+///  Author: Armand M.
+///--------------------------------------
+
 const express = require('express')
 const app = express();
 const httpServer = require('http').createServer();

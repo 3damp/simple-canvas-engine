@@ -1,3 +1,9 @@
+///--------------------------------------
+///  Websocket Init file
+///  - Starts communication with Server
+///  
+///  Author: Armand M.
+///--------------------------------------
 
 let ws = undefined;
 /**
